@@ -23,6 +23,7 @@ import Plugin from './Plugin.js';
 import Result from './Result.js';
 import Rule from './Rule.js';
 import IntermediateRepresentation from './IntermediateRepresentation.js';
+import ParseException from './ParseException.js';
 
 export * from './utils.js';
 
@@ -32,5 +33,6 @@ export {
     Plugin,
     Result,
     Rule,
-    IntermediateRepresentation
+    IntermediateRepresentation,
+    ParseException
 };

@@ -94,13 +94,27 @@ class Parser {
      *   for checking for problems.
      * <li>resources - array of instances of Resource classes as
      *   defined in {@link https://github.com/ilib-js/ilib-tools-common}.
-     *   This is the preference intermediate representation for
-     *   resource files like Java properties or xliff. There are many
-     *   rules that already know how to process Resource instances.
+     *   This is the preferred intermediate representation for
+     *   resource files like Java properties or xliff files. There are many
+     *   rules that already know how to process Resource instances that
+     *   can apply equally well to resources from any resource file type.
      * </ul>
+     *
+     * There are occasions when the parser itself can produce errors:
+     *
+     * - incorrect or unknown character set
+     * - incorrect encoding of the given character set
+     * - syntax error in the file which prevents proper parsing
+     * - i/o errors while reading the file (for example, a dangling symbolic
+     *   link)
+     *
+     * In these cases, this method should throw a ParseException and
+     * attach one or more Result instance to the exception which can be
+     * reported back to the user via the normal formatters.
      *
      * @abstract
      * @returns {IntermediateRepresentation} the intermediate representation
+     * @throws {ParseException} if there are errors while parsing the file
      */
     parse() {}
 

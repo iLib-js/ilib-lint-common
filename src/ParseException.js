@@ -34,7 +34,7 @@ class ParseException extends Error {
     addResult(result) {
         if (result) this.results.push(result);
     }
-    
+
     /**
      * Return the array of result instances that give more information
      * about the current exception.

@@ -102,11 +102,13 @@ class Parser {
      *
      * There are occasions when the parser itself can produce errors:
      *
-     * - incorrect or unknown character set
-     * - incorrect encoding of the given character set
-     * - syntax error in the file which prevents proper parsing
-     * - i/o errors while reading the file (for example, a dangling symbolic
-     *   link)
+     * <ul>
+     * <li>incorrect or unknown character set
+     * <li>incorrect encoding of the given character set
+     * <li>syntax error in the file which prevents proper parsing
+     * <li>i/o errors while reading the file (for example, an unsatisfied
+     *   symbolic link)
+     * </li>
      *
      * In these cases, this method should throw a ParseException and
      * attach one or more Result instance to the exception which can be

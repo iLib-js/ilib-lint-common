@@ -111,7 +111,7 @@ export const testResult = {
         test.expect(4);
 
         const result = new Result({
-            severity: "issue",
+            severity: "warning",
             pathName: "a/b/c.js",
             description: "test",
             rule
@@ -144,7 +144,7 @@ export const testResult = {
 
         test.throws(test => {
             new Result({
-                severity: "issue",
+                severity: "warning",
                 description: "test",
                 rule
             });
@@ -158,7 +158,7 @@ export const testResult = {
 
         test.throws(test => {
             new Result({
-                severity: "issue",
+                severity: "warning",
                 pathName: "a/b/c.js",
                 rule
             });
@@ -172,7 +172,7 @@ export const testResult = {
 
         test.throws(test => {
             new Result({
-                severity: "issue",
+                severity: "warning",
                 pathName: "a/b/c.js",
                 description: "test"
             });

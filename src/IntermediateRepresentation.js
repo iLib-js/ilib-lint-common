@@ -20,6 +20,7 @@
 
 /**
  * @class Representation of parser results
+ * @template T Type of contained representation object
  */
 class IntermediateRepresentation {
     /**
@@ -27,29 +28,26 @@ class IntermediateRepresentation {
      *
      * @param {Object} params parameters for this representation
      * @param {String} params.type a unique name for this type of representation
-     * @param {*} params.ir the intermediate representation of this file
+     * @param {T} params.ir the intermediate representation of this file
      * @param {String} params.filePath the path to the current file
-     * @param {FileStats} [params.stats] statistics about the file that was parsed
+     * @param {import("./FileStats.js").default} [params.stats] statistics about the file that was parsed
      */
-    constructor(params) {
-        const requiredFields = ["type", "ir", "filePath"];
-        const missing = requiredFields.filter(p => {
-            if (typeof(params[p]) !== "undefined") {
-                this[p] = params[p];
-                return false;
-            }
-            return true;
-        });
-        if (missing.length) {
-            throw new Error("Missing required parameters in the IntermediateRepresentation constructor: " + missing.join(", "));
-        }
-        ["stats"].forEach(property => {
-            if (typeof(params[property]) !== 'undefined') this[property] = params[property];
-        });
+    constructor({ type, ir, filePath, stats }) {
+        this.type = type;
+        this.ir = ir;
+        this.filePath = filePath;
+        this.stats = stats;
     }
+
+    /** 
+     * A unique name for this type of representation
+     * @readonly
+     */
+    type;
 
     /**
      * Return the type of this representation.
+     * @see {@link IntermediateRepresentation.type}
      *
      * @returns {String} The type of this representation
      */
@@ -57,14 +55,26 @@ class IntermediateRepresentation {
         return this.type;
     }
 
+    /** 
+     * Representation that was parsed from the file
+     * @readonly
+     */
+    ir;
+
     /**
      * Return the representation that was parsed from the file.
      *
-     * @returns {*} the representation
+     * @returns {T} the representation
      */
     getRepresentation() {
         return this.ir;
     }
+
+    /**
+     * Path to the file that was parsed
+     * @readonly
+     */
+    filePath;
 
     /**
      * Return the file path to the file that was parsed.
@@ -74,6 +84,12 @@ class IntermediateRepresentation {
     getPath() {
         return this.filePath;
     }
-};
+
+    /** 
+     * Statistics about the file that was parsed
+     * @readonly
+     */
+    stats;
+}
 
 export default IntermediateRepresentation;

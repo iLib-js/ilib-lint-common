@@ -17,29 +17,48 @@
  * limitations under the License.
  */
 
+import IntermediateRepresentation from "./IntermediateRepresentation.js";
+import NotImplementedError from "./NotImplementedError.js";
+
 /**
- * @class common SPI for parser plugins
+ * @class common API for parser plugins
  * @abstract
+ * @template T
  */
 class Parser {
     /**
      * Construct a new plugin.
      *
      * @param {Object} [options] options to the constructor
-     * @param {Function} options.getLogger a callback function provided by
+     * @param {((name: string) => any)} [options.getLogger] a callback function provided by
      * the linter to retrieve the log4js logger
      */
     constructor(options) {
         if (this.constructor === Parser) {
             throw new Error("Cannot instantiate abstract class Plugin directly!");
         }
+        this.getLogger = options?.getLogger;
     }
+
+    /** a callback function provided by
+     * the linter to retrieve the log4js logger
+     * @type {((name: string) => any)|undefined}
+     */
+    getLogger;
 
     /**
      * Initialize the current plugin.
      * @abstract
      */
     init() {}
+
+    /** name of this type of parser
+     * @readonly
+     * @abstract
+     * @type {string}
+     */
+    // @ts-expect-error: subclass should define this property
+    name;
 
     /**
      * Return the name of this type of parser.
@@ -51,6 +70,15 @@ class Parser {
         return this.name;
     }
 
+    /** description of what this parser does and what kinds of files it
+     * handles for users who are trying to discover whether or not to use it
+     * @readonly
+     * @abstract
+     * @type {string}
+     */
+    // @ts-expect-error: subclass should define this property
+    description;
+
     /**
      * Return a description of what this parser does and what kinds of files it
      * handles for users who are trying to discover whether or not to use it.
@@ -60,6 +88,15 @@ class Parser {
     getDescription() {
         return this.description;
     }
+
+    /** list of extensions of the files that this parser handles.
+     * The extensions are listed without the dot. eg. ["json", "jsn"]
+     * @readonly
+     * @abstract
+     * @type {string[]}
+     */
+    // @ts-expect-error: subclass should define this property
+    extensions;
 
     /**
      * Return the list of extensions of the files that this parser handles.
@@ -100,30 +137,45 @@ class Parser {
      * </ul>
      *
      * @abstract
-     * @returns {IntermediateRepresentation} the intermediate representation
+     * @returns {IntermediateRepresentation<T>} the intermediate representation
      */
-    parse() {}
+    parse() {
+        throw new NotImplementedError();
+    }
+
+    /** type of intermediate representation that this parser
+     * produces. The type should be a unique name that matches with
+     * the rule type for rules that process this intermediate representation
+     *
+     * There are three types that are reserved, however:<p>
+     *
+     * - `resource` - the parser returns an array of Resource instances as
+     *   defined in {@link https://github.com/ilib-js/ilib-tools-common}.
+     * - `line` - the parser produces a set of lines as an array of strings
+     * - `string` - the parser doesn't parse. Instead, it just treats the
+     *   the file as one long string.
+     *
+     * @readonly
+     * @abstract
+     * @type {string}
+     */
+    // @ts-expect-error: subclass should define this property
+    type;
 
     /**
      * Return the type of intermediate representation that this parser
      * produces. The type should be a unique name that matches with
-     * the rule type for rules that process this intermediate representation.<p>
+     * the rule type for rules that process this intermediate representation.
      *
-     * There are three types that are reserved, however:<p>
-     *
-     * <ul>
-     * <li>resource - the parser returns an array of Resource instances as
-     *   defined in {@link https://github.com/ilib-js/ilib-tools-common}.
-     * <li>line - the parser produces a set of lines as an array of strings
-     * <li>string - the parser doesn't parse. Instead, it just treats the
-     *   the file as one long string.
-     * </ul>
+     * @see {@link Parser.type}
      *
      * @abstract
      * @returns {String} the name of the current type of intermediate
      * representation.
      */
-    getType() {}
+    getType() {
+        return this.type;
+    }
 
     /**
      * Write out the intermediate representation back into the file.
@@ -141,11 +193,11 @@ class Parser {
      * Ideally, when provided with an unchanged `ir`, this method
      * should produce an unchanged file (or an equivalent of it).
      *
-     * @param {IntermediateRepresentation} ir Modified representation to write out
+     * @param {IntermediateRepresentation<T>} ir Modified representation to write out
      * @return {void}
      */
     write(ir) {
-        throw new Error("method not implemented");
+        throw new NotImplementedError();
     }
 
     /**

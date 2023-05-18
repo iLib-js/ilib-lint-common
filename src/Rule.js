@@ -17,9 +17,13 @@
  * limitations under the License.
  */
 
+import NotImplementedError from "./NotImplementedError.js";
+import Result from "./Result.js";
+
 /**
  * @class Represent an ilib-lint rule.
  * @abstract
+ * @template {import("./IntermediateRepresentation.js").default} IR
  */
 class Rule {
     /**
@@ -27,18 +31,27 @@ class Rule {
      * abstract class.
      *
      * @param {Object} [options] options to the constructor
-     * @param {String} options.sourceLocale the source locale of the files
+     * @param {String} [options.sourceLocale] the source locale of the files
      * being linted
-     * @param {Function} options.getLogger a callback function provided by
+     * @param {((name: string) => any)} [options.getLogger] a callback function provided by
      * the linter to retrieve the log4js logger
      */
     constructor(options) {
         if (this.constructor === Rule) {
             throw new Error("Cannot instantiate abstract class Rule directly!");
         }
-        if (!options) return;
-        this.sourceLocale = options.sourceLocale;
+        this.getLogger = options?.getLogger;
+        this.sourceLocale = options?.sourceLocale || "en-US";
     }
+
+    /** name of the rule. This should be a string with a dash-separated
+     * set of words (kebab or dash case). Example: "resource-match-whitespace"
+     * @readonly
+     * @abstract
+     * @type {string}
+     */
+    // @ts-expect-error: subclass should define this property
+    name;
 
     /**
      * Get the name of the rule. This should be a string with a dash-separated
@@ -51,16 +64,24 @@ class Rule {
         return this.name;
     }
 
+    /** General description of the type of problems that this rule is
+     * testing for. This description is not related to particular matches, so
+     * it cannot be more specific. Examples:
+     * - "translation should use the appropriate quote style"
+     * - "parameters to the translation wrapper function must not be concatenated"
+     * - "translation should match the whitespace of the source string"
+     *
+     * @readonly
+     * @abstract
+     * @type {string}
+     */
+    // @ts-expect-error: subclass should define this property
+    description;
+
     /**
      * Return a general description of the type of problems that this rule is
      * testing for. This description is not related to particular matches, so
-     * it cannot be more specific. Examples:
-     *
-     * <ul>
-     * <li>"translation should use the appropriate quote style"
-     * <li>"parameters to the translation wrapper function must not be concatenated"
-     * <li>"translation should match the whitespace of the source string"
-     * </ul>
+     * it cannot be more specific.
      *
      * @returns {String} a general description of the type of problems that this rule is
      * testing for
@@ -69,35 +90,41 @@ class Rule {
         return this.description;
     }
 
+    /** Optional web link that gives more complete explanation about the Rule
+     * and how to resolve the problem.
+     *
+     * @readonly
+     * @type {string | undefined}
+     */
+    link = undefined;
+
     /**
      * Return the optional web link that gives more complete explanation about the Rule
      * and how to resolve the problem.
      *
-     * @returns {String} an URL to a web page that explains the problem this rule checks for
+     * @returns {String | undefined} an URL to a web page that explains the problem this rule checks for
      */
     getLink() {
         return this.link;
     }
 
     /**
-     * Return the type of intermediate representation that this rule can process. Rules can
+     * Type of intermediate representation that this rule can process. Rules can
      * be any type as long as there is a parser that produces that type. By convention,
-     * there are a few types that are already defined:<p>
+     * there are a few types that are already defined:
      *
-     * <ul>
-     * <li>resource - This checks a translated Resource instance with a source string
+     * - `resource` - This checks a translated Resource instance with a source string
      *   and a translation string for a given locale. For example, a rule that checks that
      *   substitution parameters that exist in the source string also are
      *   given in the target string. Typically, resource files like po, properties, or xliff
      *   are parsed into an array of Resource instances as its intermediate representations.
-     * <li>line - This rule checks single lines of a file. eg. a rule to
+     * - `line` - This rule checks single lines of a file. eg. a rule to
      *   check the parameters to a function call.
-     * <li>string - This rule checks the entire file as a single string. Often, this type
+     * - `string` - This rule checks the entire file as a single string. Often, this type
      *   of representation is used with source code files that are checked with regular
      *   expressions, which often mean declarative rules.
-     * <li>{other} - You can choose to return any other string here that uniquely identifies the
+     * - {other} - You can choose to return any other string here that uniquely identifies the
      *   representation that a parser produces.
-     * </ul>
      *
      * Typically, a full parser for a programming language will return something like
      * an abstract syntax tree as an intermediate format. For example, the acorn parser
@@ -106,13 +133,29 @@ class Rule {
      * rules that are looking for that same string. The parser can return any string it
      * likes just as long as there are rules that know how to check it.
      *
+     * @readonly
+     * @type {string}
+     */
+    // default representation type. If your rule is different, override this method
+    type = "string";
+
+    /**
+     * Type of intermediate representation that this rule can process. Rules can
+     * be any type as long as there is a parser that produces that type.
+     *
+     * @see {@link Rule.type}
+     *
      * @returns {String} a string that names the type of intermediate representation
      * that this rule knows how to check
      */
     getRuleType() {
-        // default representation type. If your rule is different, override this method.
-        return "string";
+        return this.type;
     }
+
+    /** Source locale for this rule.
+     * @readonly
+     */
+    sourceLocale;
 
     /**
      * Get the source locale for this rule.
@@ -120,26 +163,26 @@ class Rule {
      * @returns {String} the source locale for this rule
      */
     getSourceLocale() {
-        return this.sourceLocale || "en-US";
+        return this.sourceLocale;
     }
 
     /**
-     * Test whether or not this rule matches the input. If so, produce {@see Result} instances
-     * that document what the problems are.<p>
+     * Test whether or not this rule matches the input. If so, produce {@link Result} instances
+     * that document what the problems are.
      *
      * @abstract
-     * @param {Object} options The options object as per the description above
-     * @param {*} options.ir The intermediate representation of the file to check
+     * @param {Object} options The options object as per the description
+     * @param {IR} options.ir The intermediate representation of the file to check
      * @param {String} options.locale the locale against which this rule should be checked. Some rules
      * are locale-sensitive, others not.
-     * @param {*} [options.parameters] parameters for this rule from the configuration file
+     * @param {object} [options.parameters] parameters for this rule from the configuration file
      * @returns {Result|Array.<Result>|undefined} a Result instance describing the problem if
      * the rule check fails for this locale, or an array of such Result instances if
      * there are multiple problems with the same input, or `undefined` if there is no
      * problem found (ie. the rule does not match).
      */
     match(options) {
-        throw new Error("Cannot call Rule.match() directly.");
+        throw new NotImplementedError();
     }
 }
 

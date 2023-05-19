@@ -30,6 +30,8 @@ class Parser {
      * Construct a new plugin.
      *
      * @param {Object} [options] options to the constructor
+     * @param {string} [options.filePath] path to the file that should be parsed
+     * @param {object} [options.settings] additional settings that can be passed to the parser
      * @param {((name: string) => any)} [options.getLogger] a callback function provided by
      * the linter to retrieve the log4js logger
      */
@@ -37,6 +39,7 @@ class Parser {
         if (this.constructor === Parser) {
             throw new Error("Cannot instantiate abstract class Plugin directly!");
         }
+        this.filePath = options?.filePath;
         this.getLogger = options?.getLogger;
     }
 

@@ -17,6 +17,8 @@
  * limitations under the License.
  */
 
+import Fixer from "./Fixer.js";
+
 /**
  * @class common SPI that all plugins must implement
  * @abstract
@@ -112,6 +114,19 @@ class Plugin {
      * plugin
      */
     getFormatters() {
+        return [];
+    }
+
+    /**
+     * For a "fixer" type of plugin, this returns a list of Fixer
+     * classes that this plugin implements. Note this is the class, not an
+     * instance of the class. The linter may need to instantiate this
+     * formatter multiple times.
+     *
+     * @returns {Array.<typeof Fixer>} array of Fixer classes implemented
+     * by this plugin
+     */
+    getFixers() {
         return [];
     }
 };

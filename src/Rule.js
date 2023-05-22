@@ -17,13 +17,14 @@
  * limitations under the License.
  */
 
+import IntermediateRepresentation from "./IntermediateRepresentation.js";
 import NotImplementedError from "./NotImplementedError.js";
 import Result from "./Result.js";
 
 /**
  * @class Represent an ilib-lint rule.
  * @abstract
- * @template {import("./IntermediateRepresentation.js").default} IR
+ * @template {IntermediateRepresentation} IR
  */
 class Rule {
     /**

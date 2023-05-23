@@ -62,11 +62,11 @@
         "clean": "git clean -f -d src test",
         "doc": "mkdir -p docs ; jsdoc2md -c jsdoc.json --separators --source src/* -m table > docs/i18nlint-common.md ; npm run doc:html",
         "doc:html": "jsdoc -c jsdoc.json",
-        "check": "tsc -p ./jsconfig.json"
+        "types": "tsc -p ./jsconfig.json"
     },
     "devDependencies": {
         "@tsconfig/node14": "^1.0.3",
-        "@types/node": "14",
+        "@types/node": "^14.18.47",
         "assertextras": "^1.1.0",
         "docdash": "^2.0.1",
         "jsdoc": "^4.0.2",

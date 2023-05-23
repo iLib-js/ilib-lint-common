@@ -140,7 +140,7 @@ class Parser {
      * </ul>
      *
      * @abstract
-     * @returns {IntermediateRepresentation<T>} the intermediate representation
+     * @returns {IntermediateRepresentation<T>[]} the intermediate representation
      */
     parse() {
         throw new NotImplementedError();

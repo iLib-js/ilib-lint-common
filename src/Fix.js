@@ -110,5 +110,13 @@ export class Fix {
      */
     // @ts-expect-error: subclass should define this property
     type;
+
+    /** 
+     * If the fix had been applied by the fixer.
+     * Fixer is expected to set this flag after it had applied the fix.
+     * 
+     * @type {boolean}
+     */
+    applied = false;
 }
 export default Fix;

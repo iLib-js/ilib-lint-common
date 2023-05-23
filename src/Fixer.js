@@ -36,6 +36,8 @@ export class Fixer {
      * (i.e. those that would modify the same part of the underlying representation)
      * or to offset subsequent fixes after applying one of them.
      * 
+     * For those fixes that have been applied, Fixer is expected to set the flag {@link Fix.applied}.
+     * 
      * Example scenario:
      * 
      * Take an IntermediateRepresentation with type `string`

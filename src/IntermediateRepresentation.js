@@ -57,7 +57,6 @@ class IntermediateRepresentation {
 
     /** 
      * Representation that was parsed from the file
-     * @readonly
      */
     ir;
 

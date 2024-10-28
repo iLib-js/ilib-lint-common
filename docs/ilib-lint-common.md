@@ -107,6 +107,13 @@ have been strung out horizontally like a snake.</p>
 <p>Example: this_is_snake_case_text</p></dd>
 </dl>
 
+## Typedefs
+
+<dl>
+<dt><a href="#TransformerOptions">TransformerOptions</a></dt>
+<dd></dd>
+</dl>
+
 <a name="FileStats"></a>
 
 ## FileStats
@@ -933,7 +940,7 @@ process this same type of file.</p>
     * *[.getParsers()](#Plugin+getParsers) ⇒ <code>Array.&lt;Class&gt;</code>*
     * *[.getFormatters()](#Plugin+getFormatters) ⇒ <code>Array.&lt;(Class\|Object)&gt;</code>*
     * *[.getFixers()](#Plugin+getFixers) ⇒ <code>Array.&lt;Class&gt;</code>*
-    * *[.getTransformers()](#Plugin+getTransformers) ⇒ <code>Array.&lt;Class&gt;</code>*
+    * *[.getTransformers()](#Plugin+getTransformers) ⇒ <code>Array.&lt;TransformerClass&gt;</code>*
     * *[.getSerializers()](#Plugin+getSerializers) ⇒ <code>Array.&lt;Class&gt;</code>*
 
 
@@ -1053,14 +1060,14 @@ by this plugin</p>
 
 <a name="Plugin+getTransformers"></a>
 
-### *plugin.getTransformers() ⇒ <code>Array.&lt;Class&gt;</code>*
+### *plugin.getTransformers() ⇒ <code>Array.&lt;TransformerClass&gt;</code>*
 <p>For a &quot;transformer&quot; type of plugin, this returns a list of Transformer
 classes that this plugin implements. Note this is the class, not an
 instance of the class. The linter may need to instantiate this transformer
 multiple times.</p>
 
 **Kind**: instance method of [<code>Plugin</code>](#Plugin)  
-**Returns**: <code>Array.&lt;Class&gt;</code> - <p>list of Transformer classes implemented
+**Returns**: <code>Array.&lt;TransformerClass&gt;</code> - <p>list of Transformer classes implemented
 by this plugin</p>  
 
 * * *
@@ -1841,9 +1848,7 @@ add new entries to the intermediate representation.</p>
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [options] | <code>Object</code> | <p>options to the constructor</p> |
-| [options.getLogger] | <code>function</code> | <p>a callback function provided by</p> |
-| [options.settings] | <code>object</code> | <p>additional settings that can be passed to the linter to retrieve the log4js logger</p> |
+| [options] | [<code>TransformerOptions</code>](#TransformerOptions) | <p>options to the constructor</p> |
 
 
 * * *
@@ -1950,6 +1955,20 @@ false otherwise</p>
 | Param | Type | Description |
 | --- | --- | --- |
 | str | <code>String</code> | <p>the string to test</p> |
+
+
+* * *
+
+<a name="TransformerOptions"></a>
+
+## TransformerOptions
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [getLogger] | <code>LoggerFactory</code> | <p>a callback function provided by the linter to retrieve the log4js logger</p> |
+| [settings] | <code>unknown</code> | <p>additional settings that can be passed to the transformer through linter configuration</p> |
 
 
 * * *

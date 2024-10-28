@@ -17,6 +17,9 @@
  * limitations under the License.
  */
 
+// type imports
+/** @ignore @typedef {import('./Transformer.js').TransformerClass} TransformerClass */
+
 /**
  * @class common SPI that all plugins must implement
  * @abstract
@@ -135,7 +138,7 @@ class Plugin {
      * instance of the class. The linter may need to instantiate this transformer
      * multiple times.
      *
-     * @returns {Array.<Class>} list of Transformer classes implemented
+     * @returns {Array.<TransformerClass>} list of Transformer classes implemented
      * by this plugin
      */
     getTransformers() {

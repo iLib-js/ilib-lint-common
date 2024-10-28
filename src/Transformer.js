@@ -20,6 +20,28 @@
 import NotImplementedError from "./NotImplementedError.js";
 import PipelineElement from "./PipelineElement.js";
 
+// type imports
+/** @ignore @typedef {import('./IntermediateRepresentation.js').default} IntermediateRepresentation */
+/** @ignore @typedef {(category?: string) => import('log4js').Logger} LoggerFactory */
+
+/**
+ * @typedef TransformerOptions
+ * @property {LoggerFactory} [getLogger] a callback function provided by the linter to retrieve the log4js logger
+ * @property {unknown} [settings] additional settings that can be passed to the transformer through linter configuration
+ */
+
+/**
+ * @ignore @typedef {new (options?: TransformerOptions) => Transformer} TransformerClass
+ * 
+ * A constructor function which must inherit from Transformer.
+ * Note this is the class, not an instance of the class.
+ * The linter may need to instantiate this transformer multiple times.
+ * Its constructor must optionally accept a single argument of type {@link TransformerOptions}.
+ * 
+ * Note: This type definition is tagged with `@\ignore` because JSDoc does not support TypeScript-style type definitions,
+ * nor does it allow to define a type for a constructor function differently - see https://github.com/jsdoc/jsdoc/issues/1349.
+ */
+
 /**
  * @class common SPI for transformer plugins
  *
@@ -36,10 +58,7 @@ class Transformer extends PipelineElement {
     /**
      * Construct a new transformer instance.
      *
-     * @param {Object} [options] options to the constructor
-     * @param {Function} [options.getLogger] a callback function provided by
-     * @param {object} [options.settings] additional settings that can be passed to
-     * the linter to retrieve the log4js logger
+     * @param {TransformerOptions} [options] options to the constructor
      */
     constructor(options) {
         super(options);
